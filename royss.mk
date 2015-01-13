@@ -14,20 +14,45 @@
 # limitations under the License.
 #
 
+DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
 
-DEVICE_PACKAGE_OVERLAYS += device/samsung/royss/overlay
-## Build recovery?
-#BUILD_RECOVERY := true
-include device/samsung/msm7x27a-common/msm7x27a.mk
+# This device is hdpi
+PRODUCT_AAPT_CONFIG := normal hdpi
+PRODUCT_AAPT_PREF_CONFIG := hdpi
 
-ifndef BUILD_RECOVERY
-## Splash screen
-PRODUCT_COPY_FILES += \
-    device/samsung/royss/rootdir/init.rle:root/GT-S6310.rle
-else
-## Recovery splash screen
-PRODUCT_COPY_FILES += \
-    device/samsung/royss/rootdir/init-cwm.rle:root/GT-S6310.rle
-endif
+PRODUCT_BOOT_JARS += qcmediaplayer
 
-$(call inherit-product, vendor/samsung/msm7x27a/msm7x27a-common/blobs.mk)
+# Boot animation
+TARGET_SCREEN_HEIGHT := 640
+TARGET_SCREEN_WIDTH := 480
+
+PRODUCT_PACKAGES += \
+    com.android.future.usb.accessory \
+    libnetcmdiface
+
+PRODUCT_PACKAGES += \
+    libexifa \
+    libjpega
+
+# IPv6 tethering
+PRODUCT_PACKAGES += \
+    ebtables \
+    ethertypes
+
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.product.locale.language=en \
+    ro.product.locale.region=GB
+
+# For userdebug builds
+ADDITIONAL_DEFAULT_PROPERTIES += \
+    ro.secure=0 \
+    ro.adb.secure=0 \
+    ro.debuggable=1 \
+    persist.service.adb.enable=1
+
+# We have enough storage space to hold precise GC data
+PRODUCT_TAGS += dalvik.gc.type-precise
+
+$(call inherit-product-if-exists, vendor/samsung/royss/device-vendor.mk)
+$(call inherit-product-if-exists, hardware/broadcom/wlan/bcmdhd/firmware/bcm4329/device-bcm.mk)
+$(call inherit-product, frameworks/native/build/phone-hdpi-512-dalvik-heap.mk)

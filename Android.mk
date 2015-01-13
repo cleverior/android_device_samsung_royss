@@ -1,5 +1,3 @@
-LOCAL_PATH := $(call my-dir)
-
-ifeq ($(TARGET_DEVICE),royss)
-    include $(call first-makefiles-under,$(LOCAL_PATH))
+ifeq ($(TARGET_BOOTLOADER_BOARD_NAME),royss)
+include $(call first-makefiles-under,$(call my-dir))
 endif
