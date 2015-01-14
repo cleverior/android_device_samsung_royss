@@ -4,20 +4,6 @@
 #
 
 # The generic product target doesn't have any hardware-specific pieces.
-TARGET_NO_BOOTLOADER := true
-TARGET_NO_KERNEL := true
-
-# Note: we build the platform images for ARMv7-A _without_ NEON.
-#
-# Technically, the emulator supports ARMv7-A _and_ NEON instructions, but
-# emulated NEON code paths typically ends up 2x slower than the normal C code
-# it is supposed to replace (unlike on real devices where it is 2x to 3x
-# faster).
-#
-# What this means is that the platform image will not use NEON code paths
-# that are slower to emulate. On the other hand, it is possible to emulate
-# application code generated with the NDK that uses NEON in the emulator.
-#
 -include vendor/samsung/royss/BoardConfigVendor.mk
 
 ## Platform
@@ -31,13 +17,15 @@ TARGET_NO_INITLOGO := true
 
 # Architecture
 TARGET_ARCH := arm
-TARGET_ARCH_VARIANT := armv7-a
-TARGET_CPU_VARIANT := scorpion
+TARGET_ARCH_VARIANT := armv7-a-neon
+TARGET_CPU_VARIANT := cortex-a5
 TARGET_CPU_ABI := armeabi-v7a
 TARGET_CPU_ABI2 := armeabi
 TARGET_USE_QCOM_BIONIC_OPTIMIZATION := true
 TARGET_ARCH_LOWMEM := true
 ARCH_ARM_HAVE_TLS_REGISTER := true
+TARGET_GLOBAL_CFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
+TARGET_GLOBAL_CPPFLAGS += -mtune=cortex-a5 -mfpu=neon -mfloat-abi=softfp
 
 # Bluetooth
 BOARD_HAVE_BLUETOOTH := true
@@ -49,8 +37,8 @@ HAVE_HTC_AUDIO_DRIVER := true
 BOARD_USES_GENERIC_AUDIO := true
 
 ##Kernel
-BOARD_KERNEL_BASE := 0x00400000
-BOARD_KERNEL_PAGESIZE := 2048
+BOARD_KERNEL_BASE := 0x00200000
+BOARD_KERNEL_PAGESIZE := 4096
 TARGET_KERNEL_CONFIG := royss_defconfig
 TARGET_KERNEL_SOURCE := kernel/samsung/royss
 
